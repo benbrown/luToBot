@@ -1,0 +1,36 @@
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "id": "zYoDck",
+    "name": "fetchResponseForIntent"
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnBeginDialog",
+      "$designer": {
+        "name": "BeginDialog",
+        "id": "0DLIZb"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.SetProperty",
+          "$designer": {
+            "id": "Yg4nLu"
+          },
+          "property": "dialog.result",
+          "value": "This is the response for intent ${ dialog.intent }"
+        },
+        {
+          "$kind": "Microsoft.EndDialog",
+          "$designer": {
+            "id": "bTxBQr"
+          },
+          "value": "=dialog.result"
+        }
+      ]
+    }
+  ],
+  "generator": "fetchResponseForIntent.lg"
+}

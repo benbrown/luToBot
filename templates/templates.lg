@@ -1,0 +1,139 @@
+# dialog
+- ```
+{
+  "$kind": "Microsoft.AdaptiveDialog",
+  "$designer": {
+    "$designer": {
+      "name": "GeneratedBot",
+      "id": "generatedbot"
+    }
+  },
+  "autoEndDialog": true,
+  "defaultResultProperty": "dialog.result",
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnConversationUpdateActivity",
+      "$designer": {
+        "id": "376720"
+      },
+      "actions": [
+        {
+          "$kind": "Microsoft.Foreach",
+          "$designer": {
+            "id": "518944",
+            "name": "Loop: for each item"
+          },
+          "itemsProperty": "turn.Activity.membersAdded",
+          "actions": [
+            {
+              "$kind": "Microsoft.IfCondition",
+              "$designer": {
+                "id": "641773",
+                "name": "Branch: if/else"
+              },
+              "condition": "string(dialog.foreach.value.id) != string(turn.Activity.Recipient.id)",
+              "actions": [
+                {
+                  "$kind": "Microsoft.SendActivity",
+                  "$designer": {
+                    "id": "859266",
+                    "name": "Send a response"
+                  },
+                  "activity": "\${SendActivity_Welcome()}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    ${ join(foreach(intents, intent, intentTrigger(intent)),',') }
+  ],
+  "$schema": "https://raw.githubusercontent.com/microsoft/BotFramework-Composer/stable/Composer/packages/server/schemas/sdk.schema",
+  "generator": "${ projectName }.lg",
+  "recognizer": "${ projectName }.lu"
+}
+```
+
+
+# intentTrigger(intent) 
+- ```
+    {
+      "$kind": "Microsoft.OnIntent",
+      "$designer": {
+        "id": "Lm6Aek"
+      },
+      "intent": "${ intent }",
+      "actions": [
+        {
+          "$kind": "Microsoft.BeginDialog",
+          "$designer": {
+            "id": "f0B2r4"
+          },
+          "activityProcessed": true,
+          "dialog": "fetchResponseForIntent",
+          "resultProperty": "dialog.response",
+          "options": {
+            "intent": "${ intent }"
+          }
+        },        {
+          "$kind": "Microsoft.IfCondition",
+          "$designer": {
+            "id": "if_response_${ intent }"
+          },
+          "actions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "$designer": {
+                "id": "send_response_${ intent }"
+              },
+              "activity": "\${SendActivity_send_response_${ intent }()}"
+            }
+          ],
+          "condition": "dialog.response",
+          "elseActions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "$designer": {
+                "id": "no_response_${ intent }"
+              },
+              "activity": "\${SendActivity_no_response_${ intent }()}"
+            }
+          ]
+        }
+      ]
+    }
+```
+
+# commonLgFile 
+- ```
+# WelcomeUser
+- Welcome to the bot
+# SendResponse(content) 
+- \${ content }
+# NoResponseFound(intent) 
+- Could not load response for: \${ intent }
+```
+
+# lgRule(intent) 
+- ```
+# SendActivity_send_response_${ intent }
+- \${ SendResponse(dialog.response) }
+# SendActivity_no_response_${ intent }
+- \${ NoResponseFound("${ intent }") }
+
+```
+
+# lgFile 
+- ```
+[import](common.lg)
+
+# SendActivity_Welcome() 
+- \${ WelcomeUser() }
+${ join(foreach(intents, intent, lgRule(intent)), '') }
+```
+
+# luFile 
+- ```
+${ luContent }
+```
