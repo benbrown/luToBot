@@ -90,7 +90,7 @@
               "activity": "\${SendActivity_send_response_${ intent }()}"
             }
           ],
-          "condition": "dialog.response",
+          "condition": "dialog.response!=null",
           "elseActions": [
             {
               "$kind": "Microsoft.SendActivity",
